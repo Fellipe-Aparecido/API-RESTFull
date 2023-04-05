@@ -1,5 +1,6 @@
 package br.com.rest.api.services;
 
+import br.com.rest.api.controller.PersonController;
 import br.com.rest.api.converter.DozerConverter;
 import br.com.rest.api.data.model.Person;
 import br.com.rest.api.data.vo.v1.PersonVO;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Service
 public class PersonServices {
 	
@@ -19,22 +23,28 @@ public class PersonServices {
 	public PersonVO create(PersonVO person) {
 		var entity = DozerConverter.parseObject(person, Person.class);
 		var vo = DozerConverter.parseObject(repository.save(entity), PersonVO.class);
+		vo.add(linkTo(methodOn(PersonController.class)
+				.findById(vo.getKey())).withSelfRel());
 		return vo;
 	}
 	
 	public List<PersonVO> findAll() {
-		return DozerConverter.parseListObjects(repository.findAll(), PersonVO.class);
+		var persons = DozerConverter.parseListObjects(repository.findAll(), PersonVO.class);
+		persons.stream().forEach(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+		return persons;
 	}	
 	
 	public PersonVO findById(Long id) {
 
 		var entity = repository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
-		return DozerConverter.parseObject(entity, PersonVO.class);
+		var vo = DozerConverter.parseObject(entity, PersonVO.class);
+		vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
+		return vo;
 	}
 		
 	public PersonVO update(PersonVO person) {
-		var entity = repository.findById(person.getId())
+		var entity = repository.findById(person.getKey())
 				.orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
 		
 		entity.setFirstName(person.getFirstName());
@@ -43,6 +53,7 @@ public class PersonServices {
 		entity.setGender(person.getGender());
 		
 		var vo = DozerConverter.parseObject(repository.save(entity), PersonVO.class);
+		vo.add(linkTo(methodOn(PersonController.class).findById(vo.getKey())).withSelfRel());
 		return vo;
 	}	
 	

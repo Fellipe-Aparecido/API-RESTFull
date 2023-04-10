@@ -4,6 +4,7 @@ import br.com.rest.api.controller.PersonController;
 import br.com.rest.api.converter.DozerConverter;
 import br.com.rest.api.data.model.Person;
 import br.com.rest.api.data.vo.v1.PersonVO;
+import br.com.rest.api.exception.RequiredObjectIsNullException;
 import br.com.rest.api.exception.ResourceNotFoundException;
 import br.com.rest.api.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class PersonServices {
 	PersonRepository repository;
 		
 	public PersonVO create(PersonVO person) {
+		if (person == null) throw new RequiredObjectIsNullException();
 		var entity = DozerConverter.parseObject(person, Person.class);
 		var vo = DozerConverter.parseObject(repository.save(entity), PersonVO.class);
 		vo.add(linkTo(methodOn(PersonController.class)
@@ -44,6 +46,7 @@ public class PersonServices {
 	}
 		
 	public PersonVO update(PersonVO person) {
+		if (person == null) throw new RequiredObjectIsNullException();
 		var entity = repository.findById(person.getKey())
 				.orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
 		

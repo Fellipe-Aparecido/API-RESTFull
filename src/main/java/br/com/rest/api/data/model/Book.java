@@ -16,10 +16,11 @@ public class Book {
     @Column(name = "author")
     private String author;
 
-    @Column(name = "launch_date")
+    @Column(name = "launch_date", nullable = false)
+    @Temporal(TemporalType.DATE)
     private Date launchDate;
 
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private BigDecimal price;
 
     @Column(name = "title")

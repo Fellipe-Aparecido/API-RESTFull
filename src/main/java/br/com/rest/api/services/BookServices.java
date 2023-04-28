@@ -19,7 +19,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class BookServices {
 
     @Autowired
-    private BookRepository bookRepository;
+    BookRepository bookRepository;
 
     public BookVO create(BookVO bookVO) {
         if (bookVO == null) throw new RequiredObjectIsNullException();

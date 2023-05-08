@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/rest_with_spring_boot_udemy?useSSL=false&serverTimezone=UTC
+    username: springstudent
+    password: springstudent
+    jpa:
+      hibernate:
+        ddl-auto: none
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQL8Dialect
+      show-sql: false
+spring-doc:
+  pathsToMatch: /api/**/v1/**
+  swagger-uri:
+    use-root-path: true
+flyway:
+  url: jdbc:mysql://localhost:3306/
+  schemas: rest_with_spring_boot_udemy
+  user: springstudent
+  password: springstudent
